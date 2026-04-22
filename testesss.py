@@ -7,7 +7,7 @@ st.title("🔍 Terminal de Consulta")
 # ── Carrega seus arquivos ──────────────────────────────────────────
 @st.cache_data
 def carregar_dados():
-    tabela1 = pd.read_excel("ANALIS_IA.xlsx")
+    tabela1 = pd.read_excel("base_de_cadastro_norte.xlsb", engine="pyxlsb")
     return {"Dados da matrícula": tabela1}
 
 tabelas = carregar_dados()
