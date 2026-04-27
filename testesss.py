@@ -1,7 +1,7 @@
 import streamlit as st
 from supabase import create_client
 
-st.set_page_config(page_title="Consulta de Matrículas", layout="wide")
+st.set_page_config(page_title="Pesquisa de Matrículas", layout="wide")
 st.title("🔍 Terminal de Consulta")
 
 @st.cache_resource
