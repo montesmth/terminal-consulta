@@ -15,16 +15,19 @@ supabase = conectar()
 num = st.text_input("Digite a Matrícula:")
 
 if num:
-    response = supabase.table("Database_Cadastro") \
-        .select("*") \
-        .eq("Matrícula", int(num)) \
-        .execute()
+    try:
+        response = supabase.table("Database_Cadastro") \
+            .select("*") \
+            .eq("Matrícula", int(num)) \
+            .execute()
 
-    if response.data:
-        st.subheader("📋 Dados da Matrícula")
-        for linha in response.data:
-            for coluna, valor in linha.items():
-                st.write(f"**{coluna}:** {valor}")
-            st.divider()
-    else:
-        st.warning("Nenhum registro encontrado para essa Matrícula.")
+        if response.data:
+            st.subheader("📋 Dados da Matrícula")
+            for linha in response.data:
+                for coluna, valor in linha.items():
+                    st.write(f"**{coluna}:** {valor}")
+                st.divider()
+        else:
+            st.warning("Nenhum registro encontrado para essa Matrícula.")
+    except ValueError:
+        st.error("Digite apenas números na matrícula.")
