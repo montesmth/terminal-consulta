@@ -16,7 +16,7 @@ num = st.text_input("Digite a Matrícula:")
 
 if num:
     try:
-        response = supabase.table("Database_Cadastro") \
+        response = supabase.table("base_cadastro_norte") \
             .select("*") \
             .eq("Matrícula", int(num)) \
             .execute()
