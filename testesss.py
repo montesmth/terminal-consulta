@@ -18,7 +18,7 @@ if num:
     try:
         response = supabase.table("base_cadastro_norte") \
             .select("*") \
-            .eq("Matrícula", int(num)) \
+            .eq("Matricula", int(num)) \
             .execute()
 
         if response.data:
