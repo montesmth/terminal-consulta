@@ -1,0 +1,7 @@
+#MainMenu { visibility: hidden; }
+footer { visibility: hidden; }
+header[data-testid="stHeader"] { background-color: transparent; }
+
+.stApp {
+    background-color: #1e1e2e;
+}
