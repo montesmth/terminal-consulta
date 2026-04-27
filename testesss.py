@@ -1,40 +1,30 @@
 import streamlit as st
-import pandas as pd
+from supabase import create_client
 
-st.set_page_config(page_title="Consulta de Ligações", layout="wide")
+st.set_page_config(page_title="Consulta de Matrículas", layout="wide")
 st.title("🔍 Terminal de Consulta")
 
-# ── Carrega seus arquivos ──────────────────────────────────────────
-@st.cache_data
-def carregar_dados():
-    tabela1 = pd.read_excel("tentativa_norte.xlsb", engine="pyxlsb")
-    return {"Dados da matrícula": tabela1}
+@st.cache_resource
+def conectar():
+    url = st.secrets["SUPABASE_URL"]
+    key = st.secrets["SUPABASE_KEY"]
+    return create_client(url, key)
 
-tabelas = carregar_dados()
+supabase = conectar()
 
-# ── Campo de busca ─────────────────────────────────────────────────
 num = st.text_input("Digite a Matrícula:")
 
 if num:
-    encontrou = False
+    response = supabase.table("Database_Cadastro") \
+        .select("*") \
+        .eq("Matrícula", num) \
+        .execute()
 
-    for nome, df in tabelas.items():
-        if "Matrícula" in df.columns:
-            resultado = df[df["Matrícula"].astype(str) == str(num)]
-
-            if not resultado.empty:
-                st.subheader(f"📋 {nome}")
-
-                for _, linha in resultado.iterrows():
-                    for coluna, valor in linha.items():
-                        st.write(f"**{coluna}:** {valor}")
-                    st.divider()
-
-                encontrou = True
-
-    if not encontrou:
+    if response.data:
+        st.subheader("📋 Dados da Matrícula")
+        for linha in response.data:
+            for coluna, valor in linha.items():
+                st.write(f"**{coluna}:** {valor}")
+            st.divider()
+    else:
         st.warning("Nenhum registro encontrado para essa Matrícula.")
-        
-        
-        
-# python -m streamlit run app.py
