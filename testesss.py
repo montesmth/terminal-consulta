@@ -6,8 +6,8 @@ st.set_page_config(page_title="Pesquisa de Matrículas", layout="wide")
 
 caminho_css = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".streamlit", "styles.css")
 with open(caminho_css) as f:
-    
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
 st.title("🔍 Terminal de Consulta")
 
 @st.cache_resource
@@ -35,5 +35,8 @@ if num:
                 st.divider()
         else:
             st.warning("Nenhum registro encontrado para essa Matrícula.")
+
     except ValueError:
         st.error("Digite apenas números na matrícula.")
+    except Exception as e:
+        st.error(f"Erro detalhado: {e}")
