@@ -1,14 +1,11 @@
 import streamlit as st
 from supabase import create_client
-import os
 
-st.set_page_config(page_title="Pesquisa de Matriculas", layout="wide")
 
-caminho_css = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".streamlit", "styles.css")
-with open(caminho_css) as f:
-    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+st.set_page_config(page_title="Pesquisa de Matrículas", layout="wide")
 
 st.title("🔍 Terminal de Consulta")
+
 
 @st.cache_resource
 def conectar():
@@ -16,27 +13,52 @@ def conectar():
     key = st.secrets["SUPABASE_KEY"]
     return create_client(url, key)
 
+
 supabase = conectar()
 
-num = st.text_input("Digite a Matrícula:")
 
-if num:
-    try:
-        response = supabase.table("base_rio_norte_v3") \
-            .select("*") \
-            .eq("Matricula", int(num)) \
-            .execute()
+def exibir_resultados(dados):
+    if dados:
+        st.subheader("📋 Dados encontrados")
+        for linha in dados:
+            for coluna, valor in linha.items():
+                st.write(f"**{coluna}:** {valor}")
+            st.divider()
+    else:
+        st.warning("Nenhum registro encontrado.")
 
-        if response.data:
-            st.subheader("📋 Dados da Matrícula")
-            for linha in response.data:
-                for coluna, valor in linha.items():
-                    st.write(f"**{coluna}:** {valor}")
-                st.divider()
-        else:
-            st.warning("Nenhum registro encontrado para essa Matrícula.")
+aba_matricula, aba_medidor = st.tabs(["📄 Busca por Matrícula", "💧 Busca por Nº do HD"])
 
-    except ValueError:
-        st.error("Digite apenas números na matrícula.")
-    except Exception as e:
-        st.error(f"Erro detalhado: {e}")
+with aba_matricula:
+    st.markdown("### Pesquisar por Matrícula")
+    num_matricula = st.text_input("Digite a Matrícula:", key="input_matricula")
+
+    if num_matricula:
+        try:
+            response = (
+                supabase.table("base_rio_norte_v3")
+                .select("*")
+                .eq("Matricula", int(num_matricula))
+                .execute()
+            )
+            exibir_resultados(response.data)
+        except ValueError:
+            st.error("Digite apenas números na matrícula.")
+        except Exception as e:
+            st.error(f"Erro detalhado: {e}")
+
+with aba_medidor:
+    st.markdown("### Pesquisar por Número do Medidor")
+    num_medidor = st.text_input("Digite o Número do Medidor:", key="input_medidor")
+
+    if num_medidor:
+        try:
+            response = (
+                supabase.table("base_rio_norte_v3")
+                .select("*")
+                .eq("HD", num_medidor)   
+                .execute()
+            )
+            exibir_resultados(response.data)
+        except Exception as e:
+            st.error(f"Erro detalhado: {e}")
